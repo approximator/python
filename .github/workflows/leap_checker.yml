@@ -5,6 +5,10 @@ on:
     paths:
     - 'leap_checker/**'
     - 'workflows/leap_checker.yml'
+  pull_request:
+    paths:
+    - 'leap_checker/**'
+    - 'workflows/leap_checker.yml'
 
 jobs:
   build:
@@ -29,4 +33,3 @@ jobs:
       run: |
         cd leap_checker
         tox
-
