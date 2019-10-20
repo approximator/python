@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  db:
+    image: mdillon/postgis
+    environment:
+      POSTGRES_PASSWORD: example
+      POSTGRES_DB: real
+    shm_size: '2gb'
+    user: "1000:1000"
+    volumes:
+      - ./dock/postgres:/var/lib/postgresql/data
+      - /etc/passwd:/etc/passwd:ro
+    ports:
+      - 5432:5432
+
+  pgadmin:
+    image: dpage/pgadmin4
+    depends_on:
+      - db
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "user@domain.com"
+      PGADMIN_DEFAULT_PASSWORD: "pass"
+    ports:
+      - 8080:80
+
+  jupyter:
+    image: jupyter
+    build:
+      context: .
+      dockerfile: Dockerfile_jupyter
+    environment:
+      NB_UID: 1000
+      NB_GID: 1000
+      CHOWN_HOME: 'yes'
+      CHOWN_HOME_OPTS: '-R'
+    volumes:
+      - ./:/home/jovyan/work/
+    command: "start-notebook.sh --NotebookApp.password='sha1:d7fcd906fb74:30f5a98425c808169720ea0db0736a860cf756fd'"
+    ports:
+      - 8888:8888
