@@ -1,0 +1,4 @@
+FROM jupyter/base-notebook
+
+RUN conda install -y psycopg2 shapely sqlalchemy geoalchemy2 marshmallow-sqlalchemy tornado scrapy jaeger-client \
+ && pip install aiopg
