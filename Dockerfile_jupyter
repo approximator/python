@@ -1,4 +1,21 @@
-FROM jupyter/base-notebook
+FROM jupyter/minimal-notebook
 
-RUN conda install -y psycopg2 shapely sqlalchemy geoalchemy2 marshmallow-sqlalchemy tornado scrapy jaeger-client \
- && pip install aiopg
+USER root
+
+RUN apt-get update -y                                            \
+ && apt-get install -y xz-utils bzip2 unzip curl build-essential
+
+USER $NB_UID
+
+RUN conda update --all                                           \
+  && conda install -y psycopg2 shapely sqlalchemy                \
+                      geoalchemy2 marshmallow-sqlalchemy         \
+                      tornado scrapy jaeger-client zeromq        \
+  && pip install aiopg                                           \
+  && echo "Node: $(which node) $(node --version)"                \
+  && echo "Jupyter: $(jupyter --version)"                        \
+  && echo "User: $NB_UID"                                        \
+  && echo "\n\n==== Install  itypescript ===== \n\n"             \
+  && npm install -g itypescript                                  \
+  && its --install=local                                         \
+  && jupyter kernelspec list
